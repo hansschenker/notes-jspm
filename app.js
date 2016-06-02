@@ -1,10 +1,12 @@
 import * as Handlebars from 'handlebars';
 import $ from 'jquery';
 
-
+// notes
 import NotesList from './notes/list/notes';
 import NotesViewModel from './notes/list/notes.viewmodel';
 import notesView from './notes/list/notes.html!text';
+import './notes/list/notes.css!css';
+
 
 import Note from './notes/details/note';
 import NoteViewModel from './notes/details/note.viewmodel';
