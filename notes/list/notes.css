@@ -1,17 +1,20 @@
 * {
     box-sizing: border-box;
 }
-.container {
+body {
     width:80%;
     margin: 0 auto;
 }
+
 .notes {
     background: #efefef;
 }
 
 li > span {
-    display:block;
+    display:inline-block;
+    text-align: center;
     width:30px;
     height:1.5em;
+    margin-bottom:.5em;
     background: lightseagreen;
 }

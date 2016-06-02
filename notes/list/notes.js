@@ -1,4 +1,4 @@
-export default function Notes() {
+export default function NotesList() {
     
     let notes = [];
     let self = this;
@@ -8,7 +8,7 @@ export default function Notes() {
     }
     
 
-Notes.prototype.add =    function add(note) {
+NotesList.prototype.add =    function add(note) {
 
         if (notes) {
             self.notes.push(note);
@@ -19,7 +19,7 @@ Notes.prototype.add =    function add(note) {
 
     }
 
-Notes.prototype.list = function list() {
+NotesList.prototype.list = function list() {
 
         if (notes) {
             return notes;
