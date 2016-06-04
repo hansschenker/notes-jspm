@@ -1,30 +1,21 @@
-export default function NotesList() {
-    
-    let notes = [];
-    let self = this;
+import Note from '../details/note';
 
 
 
-    }
-    
+export {notes};
 
-NotesList.prototype.add =    function add(note) {
-
-        if (notes) {
-            self.notes.push(note);
-        } else {
-            let notes = [];
-            self.notes.push(note);
-        }
-
-    }
-
-NotesList.prototype.list = function list() {
-
-        if (notes) {
-            return notes;
-        } else {
-            let notes = [];
+    //get notes() {return this.notes;}
+    //set notes(value) {this.notes = value;}
+    /*
+    loadArray() {
+        if(typeof notes !== 'Array') {
+            this.notes = [];
         }
         
-}
+        notes.push(new Note(1, 'Note 1'));
+        notes.push(new Note(2, 'Note 2'));
+        notes.push(new Note(3, 'Note 3'));
+        notes.push(new Note(4, 'Note 4'));
+        notes.push(new Note(5, 'Note 5'));
+    }
+    */
