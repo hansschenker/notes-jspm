@@ -1,82 +1,51 @@
 import * as Handlebars from 'handlebars';
 import $ from 'jquery';
 
+//note: import model
 import Note from './notes/details/note';
 
-// Notes template, model , viewmodel
-// load model data
-//import {notes} from './notes/list/notes';
+//notes.viewmodel: import NotesViewModel from './notes/list/notes.viewmodel';
 
-
-
-import NotesViewModel from './notes/list/notes.viewmodel';
-
-// load template
+//notes:import template and style 
 import template from './notes/list/notes.html!text';
-// import style for template
 import './notes/list/notes.css!css';
 
 
-let initialNotes = [];
-let updatedNotes = [];
-let currentNotes = [];
+let notes = [];
+let changedNotes = [];
 let selectedNote = null;
+
 let isInital = true;
 let renderCount = 0;
-/*
-import Note from './notes/details/note';
-import NotetemplateModel from './notes/details/note.templatemodel';
-import notetemplate from './notes/details/note.html!text';
-*/
+
 
 $(function () {
+    
+    // fill notes array
+    initNotes();
+    
     renderNotesView();
     //isInital = false;
 
 })
 
-/*
-function laodNotetemplate() {
 
-    // compile template
-    let template = Handlebars.compile(notetemplate);
-    let note = new Note('Note 1');
-    let noteHtml = template({ title: note.title });
-
-    // insert into to DOM
-    let noteInput = document.createElement('div');
-    noteInput.innerHTML = noteHtml;
-    document.body.appendChild(noteInput);
-}
-*/
 function renderNotesView() {
-
-    renderCount++;
-    console.log('isInitial:', isInital, renderCount);
-
-    if (isInital) {
-
-        initialLoad();
-        console.dir(initialNotes);
-        currentNotes = initialNotes;
-        isInital = false;
-
-    } else {
+    
+    
+    loadChangedNotes()
+    console.dir(changedNotes);
+    
+    if(isInital === false){
         removeListElementFromDom();
-        updateLoad();
-        console.dir(updatedNotes);
-        currentNotes = updatedNotes;
     }
-
-    renderNotesTemplate(currentNotes);
-
-
-
-
-    let notesViewModel = new NotesViewModel(null, null, selectedNote);
+    
+    renderNotes(changedNotes);
+    
+    isInital = false
 }
 
-function renderNotesTemplate(notes){
+function renderNotes(notes){
     
     let notesListHtml = compileNotesTemplate(notes);
 
@@ -87,21 +56,23 @@ function renderNotesTemplate(notes){
 
 }
 
-function initialLoad() {
-
-
-    initialNotes.push(new Note(1, 'Note 1'));
-    initialNotes.push(new Note(2, 'Note 2'));
-    initialNotes.push(new Note(3, 'Note 3'));
-    initialNotes.push(new Note(4, 'Note 4'));
-    initialNotes.push(new Note(5, 'Note 5'));
+function initNotes(){
+    
+    notes.push(new Note(1, 'Note 1'));
+    notes.push(new Note(2, 'Note 2'));
+    notes.push(new Note(3, 'Note 3'));
+    notes.push(new Note(4, 'Note 4'));
+    notes.push(new Note(5, 'Note 5'));
 }
 
-function updateLoad() {
-    updatedNotes = initialNotes.slice();
+function loadChangedNotes() {
+   notes.forEach(n => changedNotes.push(n));
+
 }
 
-function loadJsonNotes(notes) {
+
+
+function convertNotesToJson(notes) {
 
     let data = {};
     data.notes = notes;
@@ -112,15 +83,15 @@ function loadJsonNotes(notes) {
 
 function compileNotesTemplate() {
 
-    // compile template
+    // the imported template
     console.log(template);
 
-    let templateString = Handlebars.compile(template);
+    let templateFunction = Handlebars.compile(template);
 
-    // get data for template
-    let jsonNotes = loadJsonNotes(currentNotes);
+    // get notes as for handlebars
+    let jsonNotes = convertNotesToJson(notes);
     console.log(jsonNotes);
-    let compiledTemplate = templateString(jsonNotes);
+    let compiledTemplate = templateFunction(jsonNotes);
 
     console.log('compiledTemplate', compiledTemplate);
 
@@ -128,6 +99,7 @@ function compileNotesTemplate() {
     return compiledTemplate;
 
 }
+
 function addListElementToDom(html) {
 
     let listElement = document.createElement('ul');
@@ -141,14 +113,6 @@ function removeListElementFromDom() {
     let listElement = document.getElementById('notes');
     console.dir(listElement.parentNode);
     listElement.parentNode.removeChild(listElement);
-    
-    //console.dir(listElement.parentNode);
-    console.dir(document);
-    //$('#notes').remove();
-    isInital = false;
-    
-    //let item = document.all[listElement.parentNode];
-    //console.dir(item);
     
 }
 
@@ -167,8 +131,9 @@ function selectNote(id) {
 
 }
 function deleteNote(id) {
-    currentNotes.splice(id, 1);
-    console.log(currentNotes);
+    
+    notes.splice(id, 1);
+    console.log(notes);
     
     renderNotesView(false);
 }
