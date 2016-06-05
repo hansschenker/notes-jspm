@@ -1,6 +1,6 @@
 import NotesViewModel from './notes/list/notes.viewmodel';
 
-
+let notesViewModel = new NotesViewModel();
 
 
 $(function () {
@@ -13,14 +13,17 @@ $(function () {
 })
 
 function render() {
+    
 
+
+    
     renderList();
 }
 
 
 function renderList() {
 
-    let notesViewModel = new NotesViewModel();
+    
     var html;
     html = notesViewModel.compileNotesTemplate();
 
@@ -38,6 +41,7 @@ function addListElementToDom(html) {
     listElement.id = "notes";
     listElement.innerHTML = html;
     document.body.appendChild(listElement);
+    //this.notesViewModel.notesElement(listElement);
 }
 
 function removeListElementFromDom() {
@@ -60,7 +64,7 @@ function attachListenersToNotesList() {
         } else if (event.target.nodeName === 'SPAN') {
             let index = (parseInt(event.target.parentNode.id) - 1);
             console.log('span li index', index);
-            deleteNote(index);
+            notesViewModel.deleteNote(index);
             //console.dir(event.target.parentNode); 
         }
     });

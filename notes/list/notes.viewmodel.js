@@ -15,52 +15,72 @@ import NotesService from '../service/notes';
 import listTemplate from './notes.html!text';
 import './notes.css!css';
 
-
-
+//         var event = document.createEvent('Event');
 
 export default class NotesViewModel {
 
+    constructor( notes, listTemplate) {
 
+        this.notesDocument = {};
 
-
-    constructor(notes, listTemplate) {
+        this.notesElement = {};
         
+        //events
+        /*
+        this.domEvent = document.createEvent('Event');
+
+        this.notesElement.addEventListener('notedeleted', function (e) {
+            console.log('event notedeleted attached');
+        }, false);
+
+        this.addEvent = new CustomEvent('add', { 'note': this.selectNote.id });
+        this.deleteEvent = new CustomEvent('delete', { 'note': this.selectedNote.id });
+
+        createDeleteEvent();
+        // end events
+        */
         this.isInitial = true;
+
         this.template = listTemplate;
-        this.notes = new NotesService().query();
-        //this.selectedNote = selectedNote || null;
+
+        this.notesService = new NotesService();
+
+        this.selectedNote = { id: 0, title: "empty note" };
+
     }
+    /*
+    set notesElement(elem){
+        this.notesElement = elem;
+        this.notesElement.addEventListener('notedeleted', function (e) {
+            console.log('event notedeleted attached');
+        }, false);
+    } 
+    createDeleteEvent() {
+        // Create the event.
+        //var event = document.createEvent('Event');
 
-/*
-   renderNotesView() {
+        // Define that the event name is 'build'.
+        domEvent.initEvent('domdelete', true, true);
 
+        // Listen for the event.
+        notesElement.addEventListener('domdelete', function (e) {
+            console.log('createDeleteEvent - domdelete event attached', e.target.id);
+        }, false);
 
-        loadChangedNotes()
-        console.dir(changedNotes);
-
-        if (isInital === false) {
-            removeListElementFromDom();
-        }
-
-        renderNotes(changedNotes);
-
-        isInital = false
+        // target can be any Element or other EventTarget.
+        notesElement.dispatchEvent(domEvent);
     }
 */
     renderNotes() {
 
-        let notesListHtml = compileNotesTemplate(this.notes);
-
-
+        let notesListHtml = this.compileNotesTemplate(this.notes);
 
     }
-
-
 
     convertNotesToJson() {
 
         let data = {};
-        data.notes = this.notes;
+        data.notes = this.notesService.getFromStorage();
         //console.log('data:', data);
 
         return data;
@@ -75,7 +95,7 @@ export default class NotesViewModel {
 
         // get notes as for handlebars
         let jsonNotes = this.convertNotesToJson(this.notes);
-        
+
         console.log(jsonNotes);
         let compiledTemplate = templateFunction(jsonNotes);
 
@@ -94,7 +114,7 @@ export default class NotesViewModel {
 
     selectNote(id) {
 
-        selectedNote = notes[id];
+        this.selectedNote = notes[id];
         console.dir(selectedNote);
         // get note from notes array
 
@@ -102,14 +122,20 @@ export default class NotesViewModel {
 
 
     }
+
     deleteNote(id) {
+        
+        this.notesService.delete(id);
+        //this.notes.splice(id, 1);
+        console.log(this.notesService.query());
+        //notesElement.dispatchEvent(domEvent);
 
-        this.notes.splice(id, 1);
-        console.log(this.notes);
-
-        renderNotesView(false);
+        this.renderNotes(false);
     }
 
+    addNote(note) {
+        this.addEvent.dispatchEvent();
+    }
 
 
 }  // class
