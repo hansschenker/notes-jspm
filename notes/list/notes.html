@@ -1,5 +1,7 @@
 <ul id="notes">
     {{#each notes}}
     <li id={{id}}>{{title}} <span>x</span></li>
+    {{else}}
+    <p>Keine Notizzen eingetragen</p>
     {{/each}}
 </ul>
