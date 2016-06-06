@@ -7,9 +7,11 @@ import Note from '../details/note';
 //notes.viewmodel: import NotesViewModel from './notes/list/notes.viewmodel';
 
 //notes: service - load/save from/to localstorage
-import NotesService from '../service/notes';
+//import NotesService from '../service/notes.service';
+//var notesService = new NotesService();
 
 
+//console.log('notes viewmodel service.getAll',notes);
 
 //notes:import template and style 
 import listTemplate from './notes.html!text';
@@ -19,96 +21,84 @@ import './notes.css!css';
 
 export default class NotesViewModel {
 
-    constructor( notes, listTemplate) {
+    constructor(listTemplate) {
+        
+       // this.listElement = null;
+        
+        this.notes = [];
+        this.jsonNotes = {};
+        this.listElementHtml = "";
+        this.storageName = "hs-notes";
 
         this.notesDocument = {};
 
         this.notesElement = {};
-        
-        //events
-        /*
-        this.domEvent = document.createEvent('Event');
 
-        this.notesElement.addEventListener('notedeleted', function (e) {
-            console.log('event notedeleted attached');
-        }, false);
+        //this.notes = this.getAll();
+        //console.log('vm constructor getall',this.notes);
+        //this.init();
 
-        this.addEvent = new CustomEvent('add', { 'note': this.selectNote.id });
-        this.deleteEvent = new CustomEvent('delete', { 'note': this.selectedNote.id });
-
-        createDeleteEvent();
-        // end events
-        */
         this.isInitial = true;
 
         this.template = listTemplate;
 
-        this.notesService = new NotesService();
+        //this.notesService = new NotesService();
 
-        this.selectedNote = { id: 0, title: "empty note" };
-
-    }
-    /*
-    set notesElement(elem){
-        this.notesElement = elem;
-        this.notesElement.addEventListener('notedeleted', function (e) {
-            console.log('event notedeleted attached');
-        }, false);
-    } 
-    createDeleteEvent() {
-        // Create the event.
-        //var event = document.createEvent('Event');
-
-        // Define that the event name is 'build'.
-        domEvent.initEvent('domdelete', true, true);
-
-        // Listen for the event.
-        notesElement.addEventListener('domdelete', function (e) {
-            console.log('createDeleteEvent - domdelete event attached', e.target.id);
-        }, false);
-
-        // target can be any Element or other EventTarget.
-        notesElement.dispatchEvent(domEvent);
-    }
-*/
-    renderNotes() {
-
-        let notesListHtml = this.compileNotesTemplate(this.notes);
+        //this.selectedNote = this.notes[0];
+        console.log('vm selectedNote', this.selectedNote);
 
     }
+    
+
+    
+    getAll() {
+
+        this.notes = JSON.parse(window.localStorage.getItem(this.storageName));
+        this.jsonNotes = this.convertNotesToJson();
+        
+        console.log('vm getall', this.notes);
+        this.listElementHtml = this.buildNotesListHtml();
+        console.log(this.jsonNotes);
+        console.log(this.listElementHtml);
+
+    }
+
 
     convertNotesToJson() {
 
         let data = {};
-        data.notes = this.notesService.getFromStorage();
+        data.notes = this.notes; // this.notesService.getAll();
+        console.log(data);
         //console.log('data:', data);
-
-        return data;
+        this.jsonNotes = data;
+        
+        //return data;
     }
 
-    compileNotesTemplate() {
+    buildNotesListHtml() {
 
         // the imported template
-        console.log(listTemplate);
+        //console.log(listTemplate);
 
         let templateFunction = Handlebars.compile(listTemplate);
 
         // get notes as for handlebars
-        let jsonNotes = this.convertNotesToJson(this.notes);
+        this.convertNotesToJson();
+        
+        let html = templateFunction(this.jsonNotes);
 
-        console.log(jsonNotes);
-        let compiledTemplate = templateFunction(jsonNotes);
-
-        console.log('compiledTemplate', compiledTemplate);
-
+        console.log('compiledTemplate', html);
+        
         // create list element and add compiled Template (html)
-        return compiledTemplate;
+        return html;
 
     }
 
 
-
-    saveNotes(notesList) {
+    saveAll() {
+        window.localStorage.setItem(this.storageName, JSON.stringify(this.notes));
+        this.getAll();
+        //this.buildNotesListHtml();
 
     }
 
@@ -124,17 +114,24 @@ export default class NotesViewModel {
     }
 
     deleteNote(id) {
-        
-        this.notesService.delete(id);
+
+        this.notes.splice(id,1);
+        this.saveAll();
+        this.getAll();
         //this.notes.splice(id, 1);
-        console.log(this.notesService.query());
+        //console.log(this.notesService.query());
         //notesElement.dispatchEvent(domEvent);
 
-        this.renderNotes(false);
+        //this.renderNotes(false);
     }
 
     addNote(note) {
-        this.addEvent.dispatchEvent();
+
+        this.notes.push(note);
+        this.saveAll();
+        this.getAll();
+
+        //this.addEvent.dispatchEvent();
     }
 
 
